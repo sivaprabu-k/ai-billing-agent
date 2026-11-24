@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from app.config import settings
+from app.api.router import api_router
+from app.utils.exception_handler import register_exception_handlers
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI(
@@ -8,6 +11,21 @@ app = FastAPI(
     version=settings.APP_VERSION,
     debug=settings.DEBUG,
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+register_exception_handlers(app)
+
+app.include_router(api_router)
 
 
 @app.get("/")
