@@ -1,11 +1,29 @@
+import { useState } from "react";
+import DashboardLayout from "./components/layout/DashboardLayout";
+import Dashboard from "./pages/Dashboard";
+
 function App() {
+  const [activePage, setActivePage] = useState("Dashboard");
+
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-purple-400">
-        AI Billing Agent
-      </h1>
-    </div>
-  )
+    <DashboardLayout
+      activePage={activePage}
+      onNavigate={setActivePage}
+    >
+      {activePage === "Dashboard" ? (
+        <Dashboard />
+      ) : (
+        <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
+          <h2 className="text-2xl font-bold text-white">
+            {activePage}
+          </h2>
+          <p className="mt-2 text-sm text-zinc-500">
+            This module is coming soon.
+          </p>
+        </div>
+      )}
+    </DashboardLayout>
+  );
 }
 
-export default App
+export default App;
