@@ -11,6 +11,14 @@ from app.schemas.auth import (
     PasswordChangeRequest,
 )
 
+from app.schemas.customer import (
+    CustomerCreate,
+    CustomerUpdate,
+    CustomerResponse,
+    CustomerPagination,
+    CustomerListResponse,
+)
+
 __all__ = [
     "UserCreate",
     "UserLogin",
@@ -19,4 +27,9 @@ __all__ = [
     "LoginRequest",
     "RefreshTokenRequest",
     "PasswordChangeRequest",
+    "CustomerCreate",
+    "CustomerUpdate",
+    "CustomerResponse",
+    "CustomerPagination",
+    "CustomerListResponse",
 ]

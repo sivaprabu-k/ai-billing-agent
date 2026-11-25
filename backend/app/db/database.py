@@ -4,20 +4,17 @@ from app.db.base import Base
 from app.config import settings
 
 
-# Create database engine
 engine = create_engine(
     settings.DATABASE_URL,
     echo=settings.DEBUG,
 )
 
 
-# Create database session factory
 SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
     bind=engine,
 )
-
 
 
 def test_db_connection():
