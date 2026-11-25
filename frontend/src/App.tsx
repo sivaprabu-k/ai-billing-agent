@@ -1,6 +1,7 @@
 import { useState } from "react";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
+import Customers from "./pages/Customers";
 
 function App() {
   const [activePage, setActivePage] = useState("Dashboard");
@@ -12,6 +13,8 @@ function App() {
     >
       {activePage === "Dashboard" ? (
         <Dashboard />
+      ) : activePage === "Customers" ? (
+        <Customers />
       ) : (
         <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
           <h2 className="text-2xl font-bold text-white">
