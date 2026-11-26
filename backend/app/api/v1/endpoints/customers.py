@@ -1,7 +1,7 @@
 from typing import Literal
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
-from app.api.dependencies import get_current_user
+from app.api.dependencies import require_role
 from app.db.database import get_db
 from app.models import User
 from app.schemas import (
@@ -29,7 +29,9 @@ router = APIRouter(
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def create_customer_endpoint(
     customer_data: CustomerCreate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(
+        require_role("Admin", "Billing Staff")
+    ),
     db: Session = Depends(get_db),
 ):
     try:
@@ -71,7 +73,9 @@ def list_customers_endpoint(
         default=None,
         alias="status",
     ),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(
+        require_role("Admin", "Billing Staff", "Support Staff")
+    ),
     db: Session = Depends(get_db),
 ):
     try:
@@ -110,7 +114,9 @@ def list_customers_endpoint(
 @router.get("/{customer_id}")
 def get_customer_endpoint(
     customer_id: int,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(
+        require_role("Admin", "Billing Staff", "Support Staff")
+    ),
     db: Session = Depends(get_db),
 ):
     try:
@@ -147,7 +153,9 @@ def get_customer_endpoint(
 def update_customer_endpoint(
     customer_id: int,
     customer_data: CustomerUpdate,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(
+        require_role("Admin", "Billing Staff")
+    ),
     db: Session = Depends(get_db),
 ):
     try:
@@ -194,7 +202,9 @@ def update_customer_endpoint(
 @router.delete("/{customer_id}")
 def delete_customer_endpoint(
     customer_id: int,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(
+        require_role("Admin")
+    ),
     db: Session = Depends(get_db),
 ):
     try:

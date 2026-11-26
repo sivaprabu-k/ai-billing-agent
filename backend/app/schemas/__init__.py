@@ -3,6 +3,8 @@ from app.schemas.user import (
     UserLogin,
     UserResponse,
     UserUpdate,
+    AdminUserCreate,
+    AdminUserUpdate,
 )
 
 from app.schemas.auth import (
@@ -18,12 +20,15 @@ from app.schemas.customer import (
     CustomerPagination,
     CustomerListResponse,
 )
+from app.schemas.role import RoleResponse
 
 __all__ = [
     "UserCreate",
     "UserLogin",
     "UserResponse",
     "UserUpdate",
+    "AdminUserCreate",
+    "AdminUserUpdate",
     "LoginRequest",
     "RefreshTokenRequest",
     "PasswordChangeRequest",
@@ -32,4 +37,5 @@ __all__ = [
     "CustomerResponse",
     "CustomerPagination",
     "CustomerListResponse",
+    "RoleResponse",
 ]
