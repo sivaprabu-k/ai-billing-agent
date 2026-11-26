@@ -8,7 +8,6 @@ from app.schemas import (
     RefreshTokenRequest,
     PasswordChangeRequest
 )
-from app.services.user_service import create_user
 from app.utils.response import global_response_format
 from app.services.auth_service import(
     login_user,
@@ -27,40 +26,6 @@ router = APIRouter(
     tags=["Authentication"],
 )
 
-
-@router.post(
-    "/register",
-    status_code=status.HTTP_201_CREATED,
-)
-def register_user(
-    user_data: UserCreate,
-    db: Session = Depends(get_db),
-):
-    try:
-        new_user = create_user(db, user_data)
-
-        user_response = UserResponse.model_validate(new_user)
-
-        return global_response_format(
-            status_value=True,
-            data=user_response.model_dump(mode="json"),
-            status_code=status.HTTP_201_CREATED,
-            status_message="User registered successfully",
-        )
-
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=str(exc),
-        ) from exc
-
-    except RuntimeError:
-        return global_response_format(
-            status_value=False,
-            data={},
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            status_message="User registration failed",
-        )
 
 @router.post("/login", status_code=status.HTTP_200_OK)
 def login(

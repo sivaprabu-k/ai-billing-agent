@@ -1,5 +1,5 @@
-from sqlalchemy import Boolean, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Boolean, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin
 
@@ -9,6 +9,11 @@ class User(Base, TimestampMixin):
 
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True, index=True
+    )
+
+    role_id: Mapped[int] = mapped_column(
+        ForeignKey("roles.id"),
+        nullable=False,
     )
 
     name: Mapped[str] = mapped_column(
@@ -25,4 +30,9 @@ class User(Base, TimestampMixin):
 
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, nullable=False
+    )
+
+    role = relationship(
+        "Role",
+        back_populates="users",
     )
