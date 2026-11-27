@@ -1,6 +1,6 @@
 from decimal import Decimal
 from sqlalchemy import Boolean, Integer, Numeric, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base, TimestampMixin
 
 
@@ -46,4 +46,9 @@ class Customer(Base, TimestampMixin):
         String(20),
         default="Active",
         nullable=False,
+    )
+
+    invoices = relationship(
+        "Invoice",
+        back_populates="customer",
     )

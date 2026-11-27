@@ -1,10 +1,14 @@
-from math import ceil
 from uuid import uuid4
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from app.models import Customer
 from app.schemas import CustomerCreate, CustomerUpdate
+from app.utils.query_helpers import (
+    apply_search,
+    apply_filters,
+    paginate_query,
+)
 
 
 def create_customer(
@@ -164,55 +168,34 @@ def get_customers(
 ) -> dict:
 
     try:
-        if page < 1:
-            raise ValueError("Page must be greater than or equal to 1")
-
-        if limit < 1 or limit > 100:
-            raise ValueError("Limit must be between 1 and 100")
+        if status and status not in ("Active", "Inactive"):
+            raise ValueError("Invalid customer status")
 
         query = db.query(Customer)
 
-        if search and search.strip():
-            search_term = f"%{search.strip()}%"
-
-            query = query.filter(
-                Customer.name.ilike(search_term)
-                | Customer.email.ilike(search_term)
-                | Customer.customer_code.ilike(search_term)
-            )
-
-        if status:
-            if status not in ("Active", "Inactive"):
-                raise ValueError("Invalid customer status")
-
-            query = query.filter(Customer.status == status)
-
-        total_items = query.count()
-        total_pages = ceil(total_items / limit)
-
-        effective_page = (
-            min(page, total_pages) if total_pages > 0 else 1
+        query = apply_search(
+            query=query,
+            search=search,
+            search_fields=[
+                Customer.name,
+                Customer.email,
+                Customer.customer_code,
+            ],
         )
 
-        customers = (
-            query
-            .order_by(Customer.id.desc())
-            .offset((effective_page - 1) * limit)
-            .limit(limit)
-            .all()
-        )
-
-        return {
-            "items": customers,
-            "pagination": {
-                "page": effective_page,
-                "limit": limit,
-                "total_items": total_items,
-                "total_pages": total_pages,
-                "has_next": effective_page < total_pages,
-                "has_previous": effective_page > 1,
+        query = apply_filters(
+            query=query,
+            filters={
+                Customer.status: status,
             },
-        }
+        )
+
+        return paginate_query(
+            query=query,
+            page=page,
+            limit=limit,
+            order_by=Customer.id.desc(),
+        )
 
     except ValueError:
         raise
